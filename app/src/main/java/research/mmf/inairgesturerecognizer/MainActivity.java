@@ -134,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         bt_start_recognition = (Button) findViewById(R.id.button_record_gesture);
         bt_store = (Button) findViewById(R.id.button_yes);
+        bt_store.setText("Save");
         bt_delete= (Button) findViewById(R.id.button_no);
+        bt_delete.setText("Delete");
         bt_start_recognition.setOnClickListener(this);
       //  bt_delete.setOnClickListener();
 
@@ -357,12 +359,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     bt_store.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
 
-                            String gesture = textView_gesture_name.getText().toString();
+                            String gesture = textView_gesture_name.getText().toString().toUpperCase();
                             gesture_names.add(gesture);
                             // writeToFile(template1);
                             //  ReadFile();
                             gesture_id++;
                             Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
+                            bt_store.setVisibility(View.INVISIBLE);
+                            bt_delete.setVisibility(View.INVISIBLE);
                         }
                     });
 
@@ -371,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             templates.remove(templates.size() - 1);
                             Log.d("hi", "" +templates.size());
+                            bt_store.setVisibility(View.INVISIBLE);
+                            bt_delete.setVisibility(View.INVISIBLE);
                         }
                     });
 //                    if(Stored) {
