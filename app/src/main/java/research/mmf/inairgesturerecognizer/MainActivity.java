@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SensorManager mSensorManager;
     private DTWGestureRecognition Recognizer;
 
-    private ArrayList<ArrayList<AccData>> templates = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<String> gesture_names = new ArrayList<>();
+    private ArrayList<ArrayList<AccData>> templates;
+    private ArrayList<String> gesture_names;
     private ArrayList<AccData> SensorData = new ArrayList<AccData>();   //gesture data that is to be recognized
     private int gesture_id = 0;
     private Boolean StoreSensorData = false;
@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private GoogleApiClient client;
 
     SharedPreferences sharedpreferences;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +136,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         MediaPlayer mediaPlayerA = MediaPlayer.create(this, R.raw.soundfilea);
+
+        // read in
+
+        Gson gson = new Gson();
+        sharedpreferences = getPreferences(Context.MODE_PRIVATE);
+
+        String templates_default = gson.toJson(new ArrayList<ArrayList<AccData>>());
+        String templates_json = sharedpreferences.getString("templates", templates_default);
+        Type templates_type = new TypeToken<ArrayList<ArrayList<AccData>>>() {}.getType();
+        templates = gson.fromJson(templates_json, templates_type);
+
+        String gesture_names_default = gson.toJson(new ArrayList<>());
+        String gesture_names_json = sharedpreferences.getString("gesture_names", gesture_names_default);
+        Type gesture_names_type = new TypeToken<ArrayList<String>>() {}.getType();
+        gesture_names = gson.fromJson(gesture_names_json, gesture_names_type);
     }
 
     public void onClick(View v) {
@@ -169,15 +182,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Recognizer.Quantization(data);
 
                 if(recording_sample_gestures) {
-                    if(templates!=null)
+                    if(templates!=null) {
                         templates.get(gesture_id).add(data);
-
-                    // write templates
-                    Editor editor = sharedpreferences.edit();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(templates);
-                    editor.putString("templates", json);
-                    editor.commit();
+                    }
                 }
                 else
                 {
@@ -277,17 +284,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("hi", "stop recognition ");
                     StoreSensorData = false;
 
-                    // read in
+                    // write templates
                     sharedpreferences = getPreferences(Context.MODE_PRIVATE);
+                    Editor editor = sharedpreferences.edit();
                     Gson gson = new Gson();
-
-                    String templates_json = sharedpreferences.getString("templates", null);
-                    Type templates_type = new TypeToken<ArrayList<ArrayList<AccData>>>() {}.getType();
-                    templates = gson.fromJson(templates_json, templates_type);
-
-                    String gesture_names_json = sharedpreferences.getString("gesture_names", null);
-                    Type gesture_names_type = new TypeToken<ArrayList<String>>() {}.getType();
-                    gesture_names = gson.fromJson(gesture_names_json, gesture_names_type);
+                    String json = gson.toJson(templates);
+                    editor.putString("templates", json);
+                    editor.commit();
 
                     int WhichGesture = Recognizer.GestureRecognition(templates, SensorData);
                     Log.d("hi", "WhichGesture" + WhichGesture);
@@ -325,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             gesture_names.add(gesture);
 
                             // write gesture_names
+                            sharedpreferences = getPreferences(Context.MODE_PRIVATE);
                             Editor editor = sharedpreferences.edit();
                             Gson gson = new Gson();
                             String json = gson.toJson(gesture_names);
