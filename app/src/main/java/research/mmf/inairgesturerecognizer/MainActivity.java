@@ -1,5 +1,15 @@
 package research.mmf.inairgesturerecognizer;
 
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.lang.reflect.Type;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,30 +25,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.content.Context;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-
 import android.app.Activity;
 import android.app.Service;
-import android.os.Vibrator;
-
-
-
-
-
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import research.mmf.gesturelib.*;
@@ -62,34 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DTWGestureRecognition Recognizer;
 
     private ArrayList<ArrayList<AccData>> templates = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<AccData> template1 = new ArrayList<AccData>();
-
-    private ArrayList<ArrayList<AccData>> templateA = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateB = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateC = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateD = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateE = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateF = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateG = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateH = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateI = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateJ = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateK = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateL = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateM = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateN = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateO = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateP = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateQ = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateR = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateS = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateT = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateU = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateV = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateW = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateX = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateY = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateZ = new ArrayList<ArrayList<AccData>>();
     private ArrayList<String> gesture_names = new ArrayList<>();
     private ArrayList<AccData> SensorData = new ArrayList<AccData>();   //gesture data that is to be recognized
     private int gesture_id = 0;
@@ -123,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private GoogleApiClient client;
 
+    SharedPreferences sharedpreferences;
+
 
 
     @Override
@@ -138,8 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_delete= (Button) findViewById(R.id.button_no);
         bt_delete.setText("Delete");
         bt_start_recognition.setOnClickListener(this);
-      //  bt_delete.setOnClickListener();
-
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -169,11 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MediaPlayer mediaPlayerA = MediaPlayer.create(this, R.raw.soundfilea);
     }
 
-
     public void onClick(View v) {
-
-
-
         if (recording_sample_gestures) {
             bt_start_recognition.setText("Click to enter new templates");
         } else {
@@ -181,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         recording_sample_gestures = !recording_sample_gestures;
-
-
     }
 
 
@@ -192,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         public void onSensorChanged(SensorEvent event) {
-
             if(StoreSensorData)
             {
                 float x = event.values[0];
@@ -207,17 +171,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(recording_sample_gestures) {
                     if(templates!=null)
                         templates.get(gesture_id).add(data);
-                    template1.add(data);
+
+                    // write templates
+                    Editor editor = sharedpreferences.edit();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(templates);
+                    editor.putString("templates", json);
+                    editor.commit();
                 }
                 else
                 {
                     SensorData.add(data);
                 }
             }
-
-
-
-
         }
 
     };
@@ -253,14 +219,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (num > 5) {
                     if (mAccel > 4) {
                         num2 = num2 + 1;
-                       // Log.d("hi", "check" + mAccel);
+                        // Log.d("hi", "check" + mAccel);
 
                     }
                     if (num2 > 5) {
 
                         if (mAccel < -4) {
                             num3 = num3 + 1;
-                           // Log.d("hi", "check" + mAccel);
+                            // Log.d("hi", "check" + mAccel);
                         }
                         if (num3 > 5) {
                             if (Math.abs(mAccel) < 0.7) {
@@ -310,28 +276,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else if (count == 0 && currentcount - lastcount == -1) {
                     Log.d("hi", "stop recognition ");
                     StoreSensorData = false;
-                   // Vibrate(MainActivity.this, 400);
 
-                // mPlayer = MediaPlayer.create(this, R.raw.soundfilea);
-//
-//                    MediaPlayer mp = new MediaPlayer();
-//                    try {
-//                        mp.setDataSource("/res/raw/soundfilea.wav");
-//                        mp.prepare();
-//                        mp.start();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
+                    // read in
+                    sharedpreferences = getPreferences(Context.MODE_PRIVATE);
+                    Gson gson = new Gson();
+
+                    String templates_json = sharedpreferences.getString("templates", null);
+                    Type templates_type = new TypeToken<ArrayList<ArrayList<AccData>>>() {}.getType();
+                    templates = gson.fromJson(templates_json, templates_type);
+
+                    String gesture_names_json = sharedpreferences.getString("gesture_names", null);
+                    Type gesture_names_type = new TypeToken<ArrayList<String>>() {}.getType();
+                    gesture_names = gson.fromJson(gesture_names_json, gesture_names_type);
 
                     int WhichGesture = Recognizer.GestureRecognition(templates, SensorData);
                     Log.d("hi", "WhichGesture" + WhichGesture);
                     String gestureRecognized = gesture_names.get(WhichGesture);
-                    //   Toast.makeText(getApplicationContext(), "It is " + WhichGesture, Toast.LENGTH_LONG).show();
                     Toast.makeText(getApplicationContext(), "It is " + gestureRecognized, Toast.LENGTH_LONG).show();
                     SensorData.clear();
                     getSound(gestureRecognized);
-
                 }
             }
             else {
@@ -342,7 +305,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     StoreSensorData = true;
 
                     templates.add(new ArrayList<AccData>());
-                    template1.clear();
 
 
                 }
@@ -361,8 +323,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             String gesture = textView_gesture_name.getText().toString().toUpperCase();
                             gesture_names.add(gesture);
-                            // writeToFile(template1);
-                            //  ReadFile();
+
+                            // write gesture_names
+                            Editor editor = sharedpreferences.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(gesture_names);
+                            editor.putString("gesture_names", json);
+                            editor.commit();
+
                             gesture_id++;
                             Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
                             bt_store.setVisibility(View.INVISIBLE);
@@ -379,19 +347,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             bt_delete.setVisibility(View.INVISIBLE);
                         }
                     });
-//                    if(Stored) {
-//                        String gesture = textView_gesture_name.getText().toString();
-//                        gesture_names.add(gesture);
-//                        // writeToFile(template1);
-//                        //  ReadFile();
-//                        gesture_id++;
-//                        Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
-//                    }
-//                    else{
-//                        Log.d("hi", "" +templates.size());
-//                        templates.remove(templates.size() - 1);
-//
-//                    }
                 }
 
 
@@ -400,189 +355,93 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    public boolean onTouchEvent(MotionEvent event){
-
-        if(recording_sample_gestures)
-        {
-            //record the data for templates
-            switch(event.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                    Log.d("hi", "hihihi" );
-
-
-
-//                    StoreSensorData = true;
-//                    templates.add(new ArrayList<AccData>());
-//                    template1.clear();
-//                    return false;
-                case MotionEvent.ACTION_UP:
-//                    StoreSensorData = false;
-//                    String gesture = textView_gesture_name.getText().toString();
-//                    switch(gesture){
-//                        case "A":
-//                            Log.v("l","a");
-//                            templateA.add(template1)  ;
-//                        case "B":
-//                            templateB.add(template1)  ;
-//                        case "C":
-//                            templateC.add(template1);
-//                        case "D":
-//                            templateD.add(template1) ;
-//                        case "E":
-//                            templateE.add(template1) ;
-//                        case "F":
-//                            templateF.add(template1) ;
-//                        case "G":
-//                            templateG.add(template1);
-//                        case "H":
-//                            templateH.add(template1);
-//                        case "I":
-//                            templateI.add(template1);
-//                        case "J":
-//                            templateJ.add(template1);
-//                        case "K":
-//                            templateK.add(template1);
-//                        case "L":
-//                            templateL.add(template1);
-//                        case "M":
-//                            templateM.add(template1);
-//                        case "N":
-//                            templateN.add(template1);
-//                        case "O":
-//                            templateO.add(template1);
-//                        case "P":
-//                            templateP.add(template1) ;
-//                        case "Q":
-//                            templateQ.add(template1);
-//                        case "R":
-//                            templateR.add(template1);
-//                        case "S":
-//                            templateS.add(template1) ;
-//                        case "T":
-//                            templateT.add(template1) ;
-//                        case "U":
-//                            templateU.add(template1) ;
-//                        case "V":
-//                            templateV.add(template1);
-//                        case "W":
-//                            templateW.add(template1);
-//                        case "X":
-//                            templateX.add(template1) ;
-//                        case "Y":
-//                            templateY.add(template1) ;
-//                        case "Z":
-//                            templateZ.add(template1);
-//                    }
-//                    gesture_names.add(gesture);
-//
-//                    writeToFile(template1);
-//                    ReadFile();
-//
-//                    gesture_id++;
-//                    Toast.makeText(getApplicationContext(),"Enter the " + gesture+ " template.", Toast.LENGTH_LONG).show();
-//                   // Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
-//                    return false;
-                default:
-                    break;
-            }
-
+    public void getSound(String gesture){
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
         }
-
-
-
-
-
-        return super.onTouchEvent(event);
+        switch (gesture) {
+            case "A":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.a);
+                break;
+            case "B":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.b);
+                break;
+            case "C":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.c);
+                break;
+            case "D":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.d);
+                break;
+            case "E":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.e);
+                break;
+            case "F":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.f);
+                break;
+            case "G":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.g);
+                break;
+            case "H":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.h);
+                break;
+            case "I":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.i);
+                break;
+            case "J":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.j);
+                break;
+            case "K":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.k);
+                break;
+            case "L":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.l);
+                break;
+            case "M":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.m);
+                break;
+            case "N":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.n);
+                break;
+            case "O":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.o);
+                break;
+            case "P":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.p);
+                break;
+            case "Q":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.q);
+                break;
+            case "R":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.r);
+                break;
+            case "S":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.s);
+                break;
+            case "T":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.t);
+                break;
+            case "U":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.u);
+                break;
+            case "V":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.v);
+                break;
+            case "W":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.w);
+                break;
+            case "X":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.x);
+                break;
+            case "Y":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.y);
+                break;
+            case "Z":
+                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.z);
+                break;
+        }
+        mPlayer.start();
     }
-
-public void getSound(String gesture){
-    if (mPlayer != null) {
-        mPlayer.release();
-        mPlayer = null;
-    }
-    switch (gesture) {
-        case "A":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.a);
-            break;
-        case "B":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.b);
-            break;
-        case "C":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.c);
-            break;
-        case "D":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.d);
-            break;
-        case "E":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.e);
-            break;
-        case "F":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.f);
-            break;
-        case "G":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.g);
-            break;
-        case "H":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.h);
-            break;
-        case "I":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.i);
-            break;
-        case "J":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.j);
-            break;
-        case "K":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.k);
-            break;
-        case "L":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.l);
-            break;
-        case "M":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.m);
-            break;
-        case "N":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.n);
-            break;
-        case "O":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.o);
-            break;
-        case "P":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.p);
-            break;
-        case "Q":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.q);
-            break;
-        case "R":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.r);
-            break;
-        case "S":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.s);
-            break;
-        case "T":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.t);
-            break;
-        case "U":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.u);
-            break;
-        case "V":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.v);
-            break;
-        case "W":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.w);
-            break;
-        case "X":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.x);
-            break;
-        case "Y":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.y);
-            break;
-        case "Z":
-            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.z);
-            break;
-    }
-    mPlayer.start();
-}
 
 
 
@@ -598,8 +457,6 @@ public void getSound(String gesture){
                 float y = data.getY();
                 float z = data.getZ();
                 s = x + " " + y + " "+z;
-               // outputWriter.write(s+"/n");
-              //  Log.d("hi",""+ s);
                 bw.write(s);
                 bw.newLine();
             }
@@ -627,13 +484,13 @@ public void getSound(String gesture){
             InputStreamReader InputRead= new InputStreamReader(fileIn);
             BufferedReader reader = new BufferedReader(InputRead);
 
-           // byte[]  buffer = new byte[fileIn.available()];
+            // byte[]  buffer = new byte[fileIn.available()];
             Log.d("hi", ""+fileIn.available());
 
             // FILL BUFFER WITH DATA
-           // fileIn.read(buffer);
+            // fileIn.read(buffer);
             int i = 0 ;
-           // while(reader.ready())
+            // while(reader.ready())
             String line = null;
             while ((line = reader.readLine()) != null) {
                 Log.d("hi", ""+line.length());
@@ -649,14 +506,6 @@ public void getSound(String gesture){
                 sb.append(line).append("\n");
 
             }
-//            String line = "";
-//            while (line != null)
-//            {    i = i +1;
-//                 line = reader.readLine();
-//                Log.d("hi", ""+line +"+");
-//
-//            }
-           // readString = new String(buffer, "UTF-8");
 
             InputRead.close();
 
@@ -665,7 +514,7 @@ public void getSound(String gesture){
             e.printStackTrace();
         }
 
-       // Log.d("hi",ret);
+        // Log.d("hi",ret);
         // return ret;
         //return readString;
     }
@@ -674,12 +523,6 @@ public void getSound(String gesture){
         Vibrator vib = (Vibrator) activity.getSystemService(Service.VIBRATOR_SERVICE);
         vib.vibrate(milliseconds);
     }
-//    public static void PlayMusic( MediaPlayer player, String sound) {
-//
-//        player = MediaPlayer.create(this,R.raw.fly);
-//    }
-
-
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
