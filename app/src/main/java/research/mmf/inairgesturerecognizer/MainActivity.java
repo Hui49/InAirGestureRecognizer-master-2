@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SensorData.clear();
                     getSound(gestureRecognized);
 
-}
+                }
             }
             else {
                 if (count == 1 && currentcount - lastcount == 1) {
@@ -497,55 +497,92 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 public void getSound(String gesture){
-
-
-      if (gesture.equals("A")){
-          Log.d("hi", "sdsd");
-
-                if (mPlayer != null) {
-                    mPlayer.release();
-                    mPlayer = null;
-                }
-                mPlayer = MediaPlayer.create(MainActivity.this, R.raw.soundfilea);
-                mPlayer.start();}
-
-
-    if (gesture.equals("B")) {
-        Log.d("hi", "ssssssd");
-    //    mPlayer.stop();
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
-        }
-
-        mPlayer = MediaPlayer.create(MainActivity.this, R.raw.soundfileb);
-        mPlayer.start();
+    if (mPlayer != null) {
+        mPlayer.release();
+        mPlayer = null;
     }
-
-    if (gesture.equals("C")) {
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
-        }
-
-        mPlayer = MediaPlayer.create(MainActivity.this, R.raw.soundfilea);
-        mPlayer.start();
+    switch (gesture) {
+        case "A":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.a);
+            break;
+        case "B":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.b);
+            break;
+        case "C":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.c);
+            break;
+        case "D":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.d);
+            break;
+        case "E":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.e);
+            break;
+        case "F":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.f);
+            break;
+        case "G":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.g);
+            break;
+        case "H":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.h);
+            break;
+        case "I":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.i);
+            break;
+        case "J":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.j);
+            break;
+        case "K":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.k);
+            break;
+        case "L":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.l);
+            break;
+        case "M":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.m);
+            break;
+        case "N":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.n);
+            break;
+        case "O":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.o);
+            break;
+        case "P":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.p);
+            break;
+        case "Q":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.q);
+            break;
+        case "R":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.r);
+            break;
+        case "S":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.s);
+            break;
+        case "T":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.t);
+            break;
+        case "U":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.u);
+            break;
+        case "V":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.v);
+            break;
+        case "W":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.w);
+            break;
+        case "X":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.x);
+            break;
+        case "Y":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.y);
+            break;
+        case "Z":
+            mPlayer = MediaPlayer.create(MainActivity.this, R.raw.z);
+            break;
     }
-    if (gesture.equals("D")) {
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
-        }
-
-        mPlayer = MediaPlayer.create(MainActivity.this, R.raw.soundfilea);
-        mPlayer.start();
-    }
-
-
-    }
-
-
-
+    mPlayer.start();
+}
 
 
 
