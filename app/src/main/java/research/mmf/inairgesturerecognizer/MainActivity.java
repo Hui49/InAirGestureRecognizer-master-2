@@ -66,32 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ArrayList<AccData>> templates1 = new ArrayList<ArrayList<AccData>>();
     private ArrayList<AccData> template1 = new ArrayList<AccData>();
 
-    private ArrayList<ArrayList<AccData>> templateA = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateB = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateC = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateD = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateE = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateF = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateG = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateH = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateI = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateJ = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateK = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateL = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateM = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateN = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateO = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateP = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateQ = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateR = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateS = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateT = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateU = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateV = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateW = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateX = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateY = new ArrayList<ArrayList<AccData>>();
-    private ArrayList<ArrayList<AccData>> templateZ = new ArrayList<ArrayList<AccData>>();
+
     private ArrayList<String> gesture_names = new ArrayList<>();
     private ArrayList<String> gesture_names1 = new ArrayList<>();
     private ArrayList<AccData> SensorData = new ArrayList<AccData>();   //gesture data that is to be recognized
