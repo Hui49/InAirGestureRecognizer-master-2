@@ -301,12 +301,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        e.printStackTrace();
 //                    }
 //
-                    Log.d("final templat size", templates1.size()+"");
-
-
+                    Log.d("lalalala", "final templat size " + templates1.size());
 
                     int WhichGesture = Recognizer.GestureRecognition(templates1, SensorData);
                     Log.d("hi", "WhichGesture" + WhichGesture);
+
                     String gestureRecognized = gesture_names1.get(WhichGesture);
                     //   Toast.makeText(getApplicationContext(), "It is " + WhichGesture, Toast.LENGTH_LONG).show();
                     Toast.makeText(getApplicationContext(), "It is " + gestureRecognized, Toast.LENGTH_LONG).show();
@@ -525,9 +524,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     gesture_names1.add(line);
                     if(tem.size()>0) {
                         templates1.add(tem);
-                        tem.clear();
+                        tem = new ArrayList<AccData>();
                     }
-
                 }
                 else {
                     float[] accdata = new float[3];
