@@ -1,15 +1,5 @@
 package research.mmf.inairgesturerecognizer;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.lang.reflect.Type;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -25,19 +15,31 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Environment;
-import android.os.Vibrator;
 import android.content.Context;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+
 import android.app.Activity;
 import android.app.Service;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.os.Vibrator;
+
+
+
+
+
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import research.mmf.gesturelib.*;
@@ -60,8 +62,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SensorManager mSensorManager;
     private DTWGestureRecognition Recognizer;
 
-    private ArrayList<ArrayList<AccData>> templates;
-    private ArrayList<String> gesture_names;
+    private ArrayList<ArrayList<AccData>> templates = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templates1 = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<AccData> template1 = new ArrayList<AccData>();
+
+    private ArrayList<ArrayList<AccData>> templateA = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateB = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateC = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateD = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateE = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateF = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateG = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateH = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateI = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateJ = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateK = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateL = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateM = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateN = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateO = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateP = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateQ = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateR = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateS = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateT = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateU = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateV = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateW = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateX = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateY = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<ArrayList<AccData>> templateZ = new ArrayList<ArrayList<AccData>>();
+    private ArrayList<String> gesture_names = new ArrayList<>();
+    private ArrayList<String> gesture_names1 = new ArrayList<>();
     private ArrayList<AccData> SensorData = new ArrayList<AccData>();   //gesture data that is to be recognized
     private int gesture_id = 0;
     private Boolean StoreSensorData = false;
@@ -94,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private GoogleApiClient client;
 
-    SharedPreferences sharedpreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_delete= (Button) findViewById(R.id.button_no);
         bt_delete.setText("Delete");
         bt_start_recognition.setOnClickListener(this);
+        //  bt_delete.setOnClickListener();
+
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -136,31 +170,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         MediaPlayer mediaPlayerA = MediaPlayer.create(this, R.raw.soundfilea);
-
-        // read in
-
-        Gson gson = new Gson();
-        sharedpreferences = getPreferences(Context.MODE_PRIVATE);
-
-        String templates_default = gson.toJson(new ArrayList<ArrayList<AccData>>());
-        String templates_json = sharedpreferences.getString("templates", templates_default);
-        Type templates_type = new TypeToken<ArrayList<ArrayList<AccData>>>() {}.getType();
-        templates = gson.fromJson(templates_json, templates_type);
-
-        String gesture_names_default = gson.toJson(new ArrayList<>());
-        String gesture_names_json = sharedpreferences.getString("gesture_names", gesture_names_default);
-        Type gesture_names_type = new TypeToken<ArrayList<String>>() {}.getType();
-        gesture_names = gson.fromJson(gesture_names_json, gesture_names_type);
     }
 
+
     public void onClick(View v) {
+
+
+
         if (recording_sample_gestures) {
+            ReadFile();
             bt_start_recognition.setText("Click to enter new templates");
         } else {
             bt_start_recognition.setText("Click to recognize gestures");
         }
 
         recording_sample_gestures = !recording_sample_gestures;
+
+
     }
 
 
@@ -170,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         public void onSensorChanged(SensorEvent event) {
+
             if(StoreSensorData)
             {
                 float x = event.values[0];
@@ -182,15 +209,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Recognizer.Quantization(data);
 
                 if(recording_sample_gestures) {
-                    if(templates!=null) {
+                    if(templates!=null)
                         templates.get(gesture_id).add(data);
-                    }
+                    template1.add(data);
                 }
                 else
                 {
                     SensorData.add(data);
                 }
             }
+
+
+
+
         }
 
     };
@@ -283,21 +314,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else if (count == 0 && currentcount - lastcount == -1) {
                     Log.d("hi", "stop recognition ");
                     StoreSensorData = false;
+                    // Vibrate(MainActivity.this, 400);
 
-                    // write templates
-                    sharedpreferences = getPreferences(Context.MODE_PRIVATE);
-                    Editor editor = sharedpreferences.edit();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(templates);
-                    editor.putString("templates", json);
-                    editor.commit();
+                    // mPlayer = MediaPlayer.create(this, R.raw.soundfilea);
+//
+//                    MediaPlayer mp = new MediaPlayer();
+//                    try {
+//                        mp.setDataSource("/res/raw/soundfilea.wav");
+//                        mp.prepare();
+//                        mp.start();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
 
-                    int WhichGesture = Recognizer.GestureRecognition(templates, SensorData);
+                    int WhichGesture = Recognizer.GestureRecognition(templates1, SensorData);
                     Log.d("hi", "WhichGesture" + WhichGesture);
-                    String gestureRecognized = gesture_names.get(WhichGesture);
+                    String gestureRecognized = gesture_names1.get(WhichGesture);
+                    //   Toast.makeText(getApplicationContext(), "It is " + WhichGesture, Toast.LENGTH_LONG).show();
                     Toast.makeText(getApplicationContext(), "It is " + gestureRecognized, Toast.LENGTH_LONG).show();
                     SensorData.clear();
                     getSound(gestureRecognized);
+
                 }
             }
             else {
@@ -308,6 +346,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     StoreSensorData = true;
 
                     templates.add(new ArrayList<AccData>());
+                    template1.clear();
 
 
                 }
@@ -326,15 +365,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             String gesture = textView_gesture_name.getText().toString().toUpperCase();
                             gesture_names.add(gesture);
-
-                            // write gesture_names
-                            sharedpreferences = getPreferences(Context.MODE_PRIVATE);
-                            Editor editor = sharedpreferences.edit();
-                            Gson gson = new Gson();
-                            String json = gson.toJson(gesture_names);
-                            editor.putString("gesture_names", json);
-                            editor.commit();
-
+                            writeToFile(gesture,template1);
+                            //  ReadFile();
                             gesture_id++;
                             Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
                             bt_store.setVisibility(View.INVISIBLE);
@@ -351,6 +383,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             bt_delete.setVisibility(View.INVISIBLE);
                         }
                     });
+//                    if(Stored) {
+//                        String gesture = textView_gesture_name.getText().toString();
+//                        gesture_names.add(gesture);
+//                        // writeToFile(template1);
+//                        //  ReadFile();
+//                        gesture_id++;
+//                        Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
+//                    }
+//                    else{
+//                        Log.d("hi", "" +templates.size());
+//                        templates.remove(templates.size() - 1);
+//
+//                    }
                 }
 
 
@@ -358,6 +403,102 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    public boolean onTouchEvent(MotionEvent event){
+
+        if(recording_sample_gestures)
+        {
+            //record the data for templates
+            switch(event.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d("hi", "hihihi" );
+
+
+
+//                    StoreSensorData = true;
+//                    templates.add(new ArrayList<AccData>());
+//                    template1.clear();
+//                    return false;
+                case MotionEvent.ACTION_UP:
+//                    StoreSensorData = false;
+//                    String gesture = textView_gesture_name.getText().toString();
+//                    switch(gesture){
+//                        case "A":
+//                            Log.v("l","a");
+//                            templateA.add(template1)  ;
+//                        case "B":
+//                            templateB.add(template1)  ;
+//                        case "C":
+//                            templateC.add(template1);
+//                        case "D":
+//                            templateD.add(template1) ;
+//                        case "E":
+//                            templateE.add(template1) ;
+//                        case "F":
+//                            templateF.add(template1) ;
+//                        case "G":
+//                            templateG.add(template1);
+//                        case "H":
+//                            templateH.add(template1);
+//                        case "I":
+//                            templateI.add(template1);
+//                        case "J":
+//                            templateJ.add(template1);
+//                        case "K":
+//                            templateK.add(template1);
+//                        case "L":
+//                            templateL.add(template1);
+//                        case "M":
+//                            templateM.add(template1);
+//                        case "N":
+//                            templateN.add(template1);
+//                        case "O":
+//                            templateO.add(template1);
+//                        case "P":
+//                            templateP.add(template1) ;
+//                        case "Q":
+//                            templateQ.add(template1);
+//                        case "R":
+//                            templateR.add(template1);
+//                        case "S":
+//                            templateS.add(template1) ;
+//                        case "T":
+//                            templateT.add(template1) ;
+//                        case "U":
+//                            templateU.add(template1) ;
+//                        case "V":
+//                            templateV.add(template1);
+//                        case "W":
+//                            templateW.add(template1);
+//                        case "X":
+//                            templateX.add(template1) ;
+//                        case "Y":
+//                            templateY.add(template1) ;
+//                        case "Z":
+//                            templateZ.add(template1);
+//                    }
+//                    gesture_names.add(gesture);
+//
+//                    writeToFile(template1);
+//                    ReadFile();
+//
+//                    gesture_id++;
+//                    Toast.makeText(getApplicationContext(),"Enter the " + gesture+ " template.", Toast.LENGTH_LONG).show();
+//                   // Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
+//                    return false;
+                default:
+                    break;
+            }
+
+        }
+
+
+
+
+
+        return super.onTouchEvent(event);
+    }
 
     public void getSound(String gesture){
         if (mPlayer != null) {
@@ -449,20 +590,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    public void writeToFile(ArrayList<AccData> template) {
+    public void writeToFile(String Gesture_name, ArrayList<AccData> template) {
         // add-write text into file
+        File dir = getFilesDir();
+        File file = new File(dir, "abc5.txt");
+        boolean deleted = file.delete();
         String s = "";
         try {
-            FileOutputStream fileout=openFileOutput("abc1.txt", MODE_APPEND );
+            FileOutputStream fileout=openFileOutput("abc4.txt", MODE_APPEND );
             OutputStreamWriter outputWriter=new OutputStreamWriter(fileout);
-            BufferedWriter bw = new BufferedWriter(outputWriter);
+            PrintWriter pw = new PrintWriter(outputWriter);
+            pw.write(Gesture_name);
+            pw.println();
             for (AccData data : template) {
                 float x = data.getX();
                 float y = data.getY();
                 float z = data.getZ();
                 s = x + " " + y + " "+z;
-                bw.write(s);
-                bw.newLine();
+                pw.write(s);
+                pw.println();
             }
 
             fileout.flush();
@@ -478,17 +624,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void ReadFile() {
 
         //reading text from file
-        String readString = null;
-        StringBuilder sb = new StringBuilder();
-
+        ArrayList<AccData> tem = new ArrayList<AccData>();
         try {
 
-            FileInputStream fileIn=openFileInput("abc1.txt");
+            FileInputStream fileIn=openFileInput("abc4.txt");
 
             InputStreamReader InputRead= new InputStreamReader(fileIn);
             BufferedReader reader = new BufferedReader(InputRead);
-
-            // byte[]  buffer = new byte[fileIn.available()];
             Log.d("hi", ""+fileIn.available());
 
             // FILL BUFFER WITH DATA
@@ -496,18 +638,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int i = 0 ;
             // while(reader.ready())
             String line = null;
+
             while ((line = reader.readLine()) != null) {
-                Log.d("hi", ""+line.length());
-                int[] accdata = new int[3];
-                String[] parts = line.split(" ");
-                int index = 0 ;
-                for (String part: parts){
-                    int in = Integer.parseInt(part);
-                    accdata[i] = in;
-                    i = i+1;
+                if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(line)){
+                    gesture_names1.add(line);
+                    templates1.add(tem);
+                    tem.clear();
                 }
-                Log.d("hi", ""+accdata[0]+" "+accdata[1]+accdata[2]);
-                sb.append(line).append("\n");
+                else {
+                    float[] accdata = new float[3];
+                    AccData data1 = null;
+                    String[] parts = line.split(" ");
+                    int index = 0;
+                    for (String part : parts) {
+                        float in = Float.parseFloat(part);
+                        accdata[i] = in;
+                        i = i + 1;
+                        data1 = new AccData(accdata[0],accdata[1],accdata[2]);
+                    }
+                    tem.add(data1);
+                    Log.d("hi", ""+accdata[0]+" "+accdata[1]+accdata[2]);
+
+                }
+
+
+
 
             }
 
@@ -523,10 +678,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //return readString;
     }
 
+
     public static void Vibrate(final Activity activity, long milliseconds) {
         Vibrator vib = (Vibrator) activity.getSystemService(Service.VIBRATOR_SERVICE);
         vib.vibrate(milliseconds);
     }
+//    public static void PlayMusic( MediaPlayer player, String sound) {
+//
+//        player = MediaPlayer.create(this,R.raw.fly);
+//    }
+
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
