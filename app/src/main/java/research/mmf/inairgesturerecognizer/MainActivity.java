@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<ArrayList<AccData>> templates1 = new ArrayList<ArrayList<AccData>>();
     private ArrayList<AccData> template1 = new ArrayList<AccData>();
 
-
     private ArrayList<String> gesture_names = new ArrayList<>();
     private ArrayList<String> gesture_names1 = new ArrayList<>();
     private ArrayList<AccData> SensorData = new ArrayList<AccData>();   //gesture data that is to be recognized
@@ -303,6 +302,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    }
 //
                     Log.d("final templat size", templates1.size()+"");
+
+
+
                     int WhichGesture = Recognizer.GestureRecognition(templates1, SensorData);
                     Log.d("hi", "WhichGesture" + WhichGesture);
                     String gestureRecognized = gesture_names1.get(WhichGesture);
@@ -341,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             String gesture = textView_gesture_name.getText().toString().toUpperCase();
                             gesture_names.add(gesture);
-                            writeToFile(gesture,template1);
+                            writeToFile(gesture, template1);
 
                             gesture_id++;
                             Toast.makeText(getApplicationContext(), "Enter the " + gesture + " template.", Toast.LENGTH_LONG).show();
@@ -465,11 +467,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void writeToFile(String Gesture_name, ArrayList<AccData> template) {
         // add-write text into file
         File dir = getFilesDir();
-        File file = new File(dir, "abc4.txt");
+        File file = new File(dir, "abc5.txt");
         boolean deleted = file.delete();
         String s = "";
+        Log.d("string", "lalalala");
+
         try {
-            FileOutputStream fileout=openFileOutput("abc5.txt", MODE_APPEND );
+            FileOutputStream fileout=openFileOutput("a.txt", MODE_APPEND );
             OutputStreamWriter outputWriter=new OutputStreamWriter(fileout);
             PrintWriter pw = new PrintWriter(outputWriter);
             pw.write(Gesture_name);
@@ -478,7 +482,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 float x = data.getX();
                 float y = data.getY();
                 float z = data.getZ();
-                s = x + " " + y + " "+z;
+//                s = String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(z);
+                s = x + " " + y + " " + z;
+
                 pw.write(s);
                 pw.println();
             }
@@ -501,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<AccData> tem = new ArrayList<AccData>();
         try {
 
-            FileInputStream fileIn=openFileInput("abc5.txt");
+            FileInputStream fileIn=openFileInput("a.txt");
 
             InputStreamReader InputRead= new InputStreamReader(fileIn);
             BufferedReader reader = new BufferedReader(InputRead);
@@ -514,6 +520,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String line = null;
 
             while ((line = reader.readLine()) != null) {
+                Log.d("a", line);
                 if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(line)){
                     gesture_names1.add(line);
                     if(tem.size()>0) {
@@ -536,12 +543,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     data1 = new AccData(accdata[0],accdata[1],accdata[2]);
                     tem.add(data1);
                    // Log.d("hi", ""+accdata[0]+" "+accdata[1]+accdata[2]);
-
                 }
-
-
-
-
             }
             templates1.add(tem);
 
